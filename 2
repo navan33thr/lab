@@ -1,0 +1,100 @@
+
+#include <stdio.h>
+
+int strLen(char s[]) {
+    int i = 0;
+    while (s[i] != '\0')
+        i++;
+    return i;
+}
+
+int findPattern(char str[], char pat[], int pos) {
+    int sLen = strLen(str);
+    int pLen = strLen(pat);
+
+    for (int i = pos; i <= sLen - pLen; i++) {
+        int j = 0;
+
+        while (j < pLen && str[i + j] == pat[j])
+            j++;
+
+        if (j == pLen)
+            return i;
+    }
+
+    return -1;
+}
+
+void findReplace(char str[], char pat[], char rep[]) {
+    char result[1000];
+
+    int sLen = strLen(str);
+    int pLen = strLen(pat);
+    int rLen = strLen(rep);
+
+    int i = 0, r = 0, count = 0;
+
+    if (pLen == 0) {
+        printf("\nPattern cannot be empty!\n");
+        return;
+    }
+
+    while (i < sLen) {
+        if (findPattern(str, pat, i) == i) {
+
+            for (int j = 0; j < rLen; j++)
+                result[r++] = rep[j];
+
+            i += pLen;
+            count++;
+        }
+        else {
+            result[r++] = str[i++];
+        }
+
+        if (r >= 999) {
+            printf("\nResult is too large!\n");
+            return;
+        }
+    }
+
+    result[r] = '\0';
+
+    if (count > 0) {
+        printf("\nReplaced %d occurrence(s)\n", count);
+        printf("Result: %s\n", result);
+
+        for (int j = 0; j <= r; j++)
+            str[j] = result[j];
+    }
+    else {
+        printf("\nPattern '%s' not found\n", pat);
+    }
+}
+
+void readInput(char str[], int size, char msg[]) {
+    printf("%s", msg);
+
+    if (fgets(str, size, stdin) != NULL) {
+        int len = strLen(str);
+
+        if (len > 0 && str[len - 1] == '\n')
+            str[len - 1] = '\0';
+    }
+}
+
+int main() {
+    char str[500], pat[100], rep[100];
+
+    printf("=== FIND AND REPLACE TOOL ===\n\n");
+
+    readInput(str, 500, "Enter main string: ");
+    readInput(pat, 100, "Enter pattern: ");
+    readInput(rep, 100, "Enter replacement: ");
+
+    printf("\nProcessing...\n");
+
+    findReplace(str, pat, rep);
+
+    return 0;
+}
